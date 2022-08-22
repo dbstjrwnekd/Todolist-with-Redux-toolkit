@@ -1,14 +1,13 @@
 import React from 'react';
-import logo from './logo.svg';
-import { Counter } from './features/counter/Counter';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
+import Home from './pages/Home';
 
 function App() {
   return (
-    <div className="App">
-      <h1>TodoList</h1>
-      <p>hi friends</p>
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+    </Routes>
   );
 }
 
