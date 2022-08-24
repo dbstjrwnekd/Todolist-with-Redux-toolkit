@@ -1,17 +1,29 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import { useEffect } from 'react';
 
 export default function AddTodo({ onClickHandler }) {
     const [todo, setTodo] = useState('');
+    const ref = useRef();
 
-    function clickHandler(todo) {
+    useEffect(() => {
+        ref.current.focus();
+    }, [])
+
+    const clickHandler = () => {
+        if (todo === '') return
         onClickHandler(todo);
         setTodo('');
+        ref.current.focus();
+    };
+
+    const keyUpEvent = (e) => {
+        if (e.key === 'Enter') clickHandler();
     }
     
     return (
         <>
-            <input value={todo} onChange={ (e) => setTodo(e.target.value) } />
-            <button type="submit" onClick={() => clickHandler(todo)}>{"할 일 추가"}</button>
+            <input ref={ref} value={todo} onChange={ (e) => setTodo(e.target.value) } onKeyUp={(e) => keyUpEvent(e)} />
+            <button type="submit" onClick={() => clickHandler()}>{"할 일 추가"}</button>
         </>
     )
 }

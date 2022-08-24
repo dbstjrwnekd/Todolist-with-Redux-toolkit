@@ -16,7 +16,7 @@ export default function Home() {
             title: todo,
             completed: false
         }
-        const newTodos = [...todos, newTodo]
+        const newTodos = [newTodo, ...todos]
         setTodos(newTodos);
         dispatch(counterActions.addTodo(newTodo));
 
