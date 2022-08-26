@@ -1,9 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
+import { createLogger } from 'redux-logger';
 import counterSlice from './slices/counterSlice';
+import todoSlice from './slices/todoSlice';
+
+const logger = createLogger();
 
 export const store = configureStore({
   reducer: {
-    counter: counterSlice.reducer,
+    todoList: todoSlice.reducer,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
   devTools: process.env.NODE_ENV !== 'production',
 });
