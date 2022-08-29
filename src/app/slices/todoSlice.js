@@ -37,6 +37,28 @@ export const TodoService = {
             })
             return newState
         }
+    ),
+    addTodo: createAsyncThunk(
+        'todos/addTodo',
+        async (todo) => {
+            const newTodo = {
+                userId: 1, //should change later
+                title: todo,
+                body: todo
+            }
+
+            const response = await fetch('https://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                body: JSON.stringify(newTodo),
+                headers: {
+                  'Content-type': 'application/json; charset=UTF-8',
+                },
+            })
+            const json = await response.json();
+            json.completed = false;
+
+            return json;
+        }
     )
 }
 
@@ -44,17 +66,6 @@ const todoSlice = createSlice({
     name: 'todos',
     initialState,
     reducers: {
-        addTodo(state, action) {
-            const newTodo = {
-                userId: 1, //should change later
-                id: state.total+1,
-                title: action.payload,
-                completed: false
-            }
-            state.todoList = [newTodo, ...state.todoList];
-            state.todo++;
-            state.total++;
-        },
         deleteTodo(state, action) {
             const deleteTodo = action.payload
             state.total--;
@@ -80,6 +91,11 @@ const todoSlice = createSlice({
     extraReducers: {
         [TodoService.getTodoList.fulfilled]: (state, action) => {
             state.todoState = action.payload
+        },
+        [TodoService.addTodo.fulfilled]: (state, action) => {
+            state.todoState.total++;
+            state.todoState.todo++;
+            state.todoState.todoList = [action.payload, ...state.todoState.todoList];
         }
     }
 })

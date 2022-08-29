@@ -1,9 +1,13 @@
 import React, { useRef, useState } from 'react'
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { TodoService } from '../app/slices/todoSlice';
 
-export default function AddTodo({ onClickHandler }) {
+export default function AddTodo() {
     const [todo, setTodo] = useState('');
     const ref = useRef();
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         ref.current.focus();
@@ -11,7 +15,7 @@ export default function AddTodo({ onClickHandler }) {
 
     const clickHandler = () => {
         if (todo === '') return
-        onClickHandler(todo);
+        dispatch(TodoService.addTodo(todo));
         setTodo('');
         ref.current.focus();
     };
