@@ -25,7 +25,7 @@ export const TodoService = {
                 done: 0
             }
 
-            newTodos.forEach(todo => {
+            newTodos.filter(todo => todo.userId === 1).forEach(todo => {
                 newState.total++;
                 if (todo.completed) {
                     newState.doneList.push(todo);
@@ -35,6 +35,7 @@ export const TodoService = {
                     newState.todo += 1
                 }
             })
+
             return newState
         }
     ),
@@ -62,13 +63,12 @@ export const TodoService = {
     ),
     deleteTodo: createAsyncThunk(
         'todos/deleteTodo',
-        async (todoId) => {
-            const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${todoId}`, {
+        async (todo) => {
+            await fetch(`https://jsonplaceholder.typicode.com/posts/${todo.id}`, {
                 method: 'DELETE'
             });
-            const json = await response.json();
-            json.id = todoId;
-            return json
+
+            return todo;
         }
     ),
     changeTodo: createAsyncThunk(
@@ -102,6 +102,7 @@ const todoSlice = createSlice({
             state.todoState = action.payload
         },
         [TodoService.addTodo.fulfilled]: (state, action) => {
+            action.payload.id = state.todoState.total+1;
             state.todoState.total++;
             state.todoState.todo++;
             state.todoState.todoList = [action.payload, ...state.todoState.todoList];
