@@ -59,6 +59,36 @@ export const TodoService = {
 
             return json;
         }
+    ),
+    deleteTodo: createAsyncThunk(
+        'todos/deleteTodo',
+        async (todoId) => {
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${todoId}`, {
+                method: 'DELETE'
+            });
+            const json = await response.json();
+            json.id = todoId;
+            return json
+        }
+    ),
+    changeTodo: createAsyncThunk(
+        'todos/changeTodo',
+        async (todo) => {
+            console.log(todo);
+            const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${todo.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(todo),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                }
+            });
+            const json = await response.json();
+
+            json.completed = !todo.completed;
+            console.log(json);
+
+            return json;
+        }
     )
 }
 
@@ -66,27 +96,6 @@ const todoSlice = createSlice({
     name: 'todos',
     initialState,
     reducers: {
-        deleteTodo(state, action) {
-            const deleteTodo = action.payload
-            state.total--;
-            if (deleteTodo.completed) {
-                state.doneList = state.doneList.filter(todo => todo.id !== deleteTodo.id)
-                state.done--;
-            } else {
-                state.todoList = state.todoList.filter(todo => todo.id !== deleteTodo.id)
-                state.todo--;
-            }
-        },
-        changeTodo(state, action) {
-            const changedTodo = action.payload
-            if (changedTodo.completed) {
-                state.doneList = state.doneList.filter(todo => todo.id !== changedTodo.id)
-                state.todoList = [...state.todoList, {...changedTodo, completed: false}]
-            } else {
-                state.todoList = state.todoList.filter(todo => todo.id !== changedTodo.id)
-                state.doneList = [...state.doneList, {...changedTodo, completed: true}]
-            }
-        }
     },
     extraReducers: {
         [TodoService.getTodoList.fulfilled]: (state, action) => {
@@ -96,6 +105,34 @@ const todoSlice = createSlice({
             state.todoState.total++;
             state.todoState.todo++;
             state.todoState.todoList = [action.payload, ...state.todoState.todoList];
+        },
+        [TodoService.addTodo.rejected]: (state, action) => {
+            state.todoState.total--;
+            state.todoState.todo--;
+            state.todoState.todoList = state.todoState.todoList.slice(1);
+        },
+        [TodoService.deleteTodo.fulfilled]: (state, action) => {
+            state.todoState.total--;
+            if (action.payload.completed) {
+                state.todoState.done--;
+                state.todoState.doneList = state.todoState.doneList.filter(todo => todo.id !== action.payload.id);
+            } else {
+                state.todoState.todo--;
+                state.todoState.todoList = state.todoState.todoList.filter(todo => todo.id !== action.payload.id);
+            }
+        },
+        [TodoService.changeTodo.fulfilled]: (state, action) => {
+            if (action.payload.completed) {
+                state.todoState.todo--;
+                state.todoState.done++;
+                state.todoState.todoList = state.todoState.todoList.filter(todo => todo.id !== action.payload.id);
+                state.todoState.doneList = [action.payload, ...state.todoState.doneList];
+            } else {
+                state.todoState.todo++;
+                state.todoState.done--;
+                state.todoState.doneList = state.todoState.doneList.filter(todo => todo.id !== action.payload.id);
+                state.todoState.todoList = [action.payload, ...state.todoState.todoList];
+            }
         }
     }
 })
