@@ -1,0 +1,10 @@
+.nav {
+  display: flex;
+  justify-content: space-around;
+  background-color: aquamarine;
+}
+
+.nav > a {
+  padding: 2% 0;
+  text-decoration: none;
+}

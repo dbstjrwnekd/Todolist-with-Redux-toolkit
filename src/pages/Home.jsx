@@ -1,23 +1,13 @@
-import React, { useEffect } from "react"
-import { useDispatch } from 'react-redux';
-import TodoList from "../components/TodoList";
-import { TodoService } from '../app/slices/todoSlice';
-import TodoCounter from "../components/TodoCounter";
-import AddTodo from "../components/AddTodo";
+import React from "react"
+import Nav from "../features/Nav/Nav"
 
 export default function Home() {
-    const dispatch = useDispatch()
-
-    useEffect(() => {
-        dispatch(TodoService.getTodoList())
-    }, [dispatch])
-
     return (
         <>
-            <h1>TodoList</h1>
-            <TodoCounter />
-            <AddTodo />
-            <TodoList />
+            <h1>HomePage</h1>
+            <Nav />
+            <p>Welcome! This is RTK & RTK Query Exercise</p>
+            <p>Using Navigation, you can experience RTK App & RTK Query APP</p>
         </>
     )
 }
